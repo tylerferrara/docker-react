@@ -1,0 +1,22 @@
+FROM node:alpine
+
+WORKDIR '/app'
+
+COPY package.json .
+RUN npm install
+
+COPY . .
+
+CMD ["npm", "run", "start"]
+
+### Run
+# docker build -p 3000:3000 -v /app/node_modules -v $(pwd):/app <containerID>
+
+### Explination
+# we are referencing the current working direcotry to /app
+# however, node_modules isn't inside the current directory
+# therefore, -v /app/node_modules will ignore the reference
+# of that folder. It is downloaded on the container (line 6)
+# This means, editing the local directory will directly effect
+# the container. Installing new packages will require a new build
+# as package.json is directly effected.
