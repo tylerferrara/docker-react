@@ -1,9 +1,16 @@
 sudo: required
 services:
-    - docker
-
+- docker
 before_install:
-    - docker build -t tjferrara/docker-react -f Dockerfile.dev .
-
+- openssl aes-256-cbc -K $encrypted_df1578915bfc_key -iv $encrypted_df1578915bfc_iv
+  -in gcp-secret.json.enc -out gcp-secret.json -d
+- docker build -t tjferrara/docker-react -f Dockerfile.dev .
 script:
-    - docker run tjferrara/docker-react npm run test -- --coverage --watchAll=false
+- docker run tjferrara/docker-react npm run test -- --coverage --watchAll=false
+deploy:
+  provider: gae
+  keyfile: gcp-secret.json.enc
+  project: learning-containers-264318
+  on:
+    branch: master
+  edge: true
